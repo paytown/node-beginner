@@ -1,4 +1,3 @@
-const querystring = require('querystring');
 const fs = require('fs');
 const formidable = require('formidable');
 
@@ -41,8 +40,7 @@ function upload(res, req) {
     });
 
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.write('received image: <br>');
-    res.write('<img src="/show">');
+    res.write('received image: <br> <img src="/show">');
     res.end();
   });
 }
