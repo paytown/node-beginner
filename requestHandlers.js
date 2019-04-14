@@ -1,7 +1,8 @@
 const querystring = require('querystring');
 const fs = require('fs');
+const formidable = require('formidable');
 
-function start(res, postData) {
+function start(res) {
   console.log('Request handler \'start\' was called.');
 
   const body = `
@@ -11,9 +12,9 @@ function start(res, postData) {
       <title>File Upload</title>
     </head>
     <body>
-      <form action="/upload" method="post">
-        <textarea name="text" rows="20" cols="60"></textarea>
-        <input type="submit" value="submit text" />
+      <form action="/upload" enctype="multipart/form-data" method="post">
+        <input type="file" name="upload" multiple="multiple">
+        <input type="submit" value="Upload a file" />
       </form>
     </body>
   </html>
@@ -24,11 +25,26 @@ function start(res, postData) {
   res.end();
 }
 
-function upload(res, postData) {
+function upload(res, req) {
   console.log('Request handler \'upload\' was called.');
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('Submitted: ' + querystring.parse(postData).text);
-  res.end();
+
+  const form = new formidable.IncomingForm();
+  console.log('about to parse');
+  form.parse(req, (error, fields, files) => {
+    console.log('parsed');
+
+    fs.rename(files.upload.path, 'tmp/test.jpg', (error) => {
+      if(error) {
+        fs.unlink('/tmp/test.jpg');
+        fs.rename(files.upload.path, '/tmp/test.jpg');
+      }
+    });
+
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.write('received image: <br>');
+    res.write('<img src="/show">');
+    res.end();
+  });
 }
 
 function show(res) {
