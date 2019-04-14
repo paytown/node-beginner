@@ -1,6 +1,4 @@
-const exec = require('child_process').exec;
-
-function start(res) {
+function start(res, postData) {
   console.log('Request handler \'start\' was called.');
 
   const body = `
@@ -21,15 +19,12 @@ function start(res) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write(body);
   res.end();
-  
-  // exec('ls -lah', (error, stdout, stderr) => {
-  // });
 }
 
-function upload(res) {
+function upload(res, postData) {
   console.log('Request handler \'upload\' was called.');
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('Hello Upload');
+  res.write('Submitted: ' + postData);
   res.end();
 }
 
